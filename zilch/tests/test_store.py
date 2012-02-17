@@ -33,18 +33,19 @@ class TestEventRecord(TestStore):
         with patch('zilch.client.send') as mock_send:
             cap = self._makeCapture()                        
             try:
+                barney = '\xff'
                 fred = smith['no_name']
             except:
                 cap()
             kwargs = mock_send.call_args[1]
-        
+
+        Session = self._makeSession()
         try:
             # For the simplejson serialization that happens
             jsonified = simplejson.loads(simplejson.dumps(kwargs))
             store.message_received(jsonified)
             store.flush()
-        
-            Session = self._makeSession()
+
             Group = self._makeGroup()
             group = Session.query(Group).all()[0]
         
